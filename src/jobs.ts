@@ -2,8 +2,6 @@ import type { CreateCDSEBatches, TypeJobsMapping } from "./types";
 import mockData from "./mock-data.json";
 import { RateLimitError } from "bullmq";
 
-import fetch from "node-fetch";
-
 const PLONE_URL = process.env.PLONE_URL || "http://localhost:8080/Plone";
 const PLONE_AUTH_TOKEN = process.env.PLONE_AUTH_TOKEN || "hello1234";
 

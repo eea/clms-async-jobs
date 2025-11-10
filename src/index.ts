@@ -1,16 +1,16 @@
-import { JOBS_MAPPING } from './jobs';
-import { Worker, Queue, RateLimitError } from 'bullmq';
-import { createBullBoard } from '@bull-board/api';
-import { FastifyAdapter } from '@bull-board/fastify';
-import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
-import fastify from 'fastify';
-import IORedis from 'ioredis';
+import { JOBS_MAPPING } from "./jobs";
+import { Worker, Queue, RateLimitError } from "bullmq";
+import { createBullBoard } from "@bull-board/api";
+import { FastifyAdapter } from "@bull-board/fastify";
+import { BullMQAdapter } from "@bull-board/api/bullMQAdapter";
+import fastify from "fastify";
+import IORedis from "ioredis";
 
-const REDIS_HOST = process.env.REDIS_HOST || 'localhost';
-const REDIS_PORT = parseInt(process.env.REDIS_PORT || '6379');
-const REDIS_DB = parseInt(process.env.REDIS_DB || '0');
-const ENABLED_JOBS = (process.env.ENABLED_JOBS || 'create_cdse_batches').split(
-  ',',
+const REDIS_HOST = process.env.REDIS_HOST || "localhost";
+const REDIS_PORT = parseInt(process.env.REDIS_PORT || "6379");
+const REDIS_DB = parseInt(process.env.REDIS_DB || "0");
+const ENABLED_JOBS = (process.env.ENABLED_JOBS || "create_cdse_batches").split(
+  ",",
 );
 
 const connection = new IORedis({
@@ -20,7 +20,7 @@ const connection = new IORedis({
   maxRetriesPerRequest: null,
 });
 
-const queueName = 'cdse_jobs';
+const queueName = "cdse_jobs";
 const queue = new Queue(queueName, { connection });
 
 /**
@@ -70,15 +70,18 @@ const startDashboard = async () => {
   const serverAdapter = new FastifyAdapter();
 
   createBullBoard({
-    queues: [new BullMQAdapter(queue)],
+    queues: [new BullMQAdapter(queue) as any],
     serverAdapter,
   });
 
-  serverAdapter.setBasePath('/ui');
-  app.register(serverAdapter.registerPlugin(), { prefix: '/ui' });
+  serverAdapter.setBasePath("/ui");
+  app.register(serverAdapter.registerPlugin(), {
+    basePath: "/ui",
+    prefix: "/ui",
+  });
 
-  const port = parseInt(process.env.PORT || '3000');
-  await app.listen({ port, host: '0.0.0.0' });
+  const port = parseInt(process.env.PORT || "3000");
+  await app.listen({ port, host: "0.0.0.0" });
   console.log(`🚀 Bull Board running at http://localhost:${port}/ui`);
 };
 
