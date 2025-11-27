@@ -8,3 +8,8 @@ export type CreateCDSEBatches = {
   user_id: string;
   cdse_datasets: string;
 };
+
+export type DownloadToolUpdates = {
+  operation: string;
+  updates: string;
+};
